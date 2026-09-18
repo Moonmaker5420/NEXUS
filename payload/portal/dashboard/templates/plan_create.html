@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% block title %}Create Plan{% endblock %}
+
+{% block content %}
+
+<style>
+    .plan-card {
+        max-width: 1100px;
+    }
+
+    .plan-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        align-items: start;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .input-row input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .input-row select {
+        width: 95px;
+        flex-shrink: 0;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .simultaneous-group {
+        max-width: 320px;
+    }
+
+    .help-text {
+        margin: 0;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+    }
+
+    .form-actions button {
+        min-width: 140px;
+    }
+
+    @media (max-width: 700px) {
+        .plan-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            justify-content: stretch;
+        }
+
+        .form-actions button {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<h1>Create Plan</h1>
+
+<div class="card plan-card">
+
+    <form method="post" action="{{ url_for('create_plan') }}">
+
+        <div class="plan-form">
+
+            <!-- Name -->
+            <div class="form-group">
+                <label for="name">Plan Name</label>
+                <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    placeholder="e.g. Day Pass"
+                    required
+                >
+            </div>
+
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input
+                    id="description"
+                    type="text"
+                    name="description"
+                    placeholder="Optional description"
+                >
+            </div>
+
+
+            <!-- Session -->
+            <div class="form-group">
+                <label for="session_minutes">Session (minutes)</label>
+                <input
+                    id="session_minutes"
+                    type="number"
+                    name="session_minutes"
+                    placeholder="Unlimited"
+                    min="1"
+                >
+            </div>
+
+
+            <!-- Simultaneous Use -->
+            <div class="form-group simultaneous-group">
+                <label for="simultaneous_use">
+                    Simultaneous Use
+                </label>
+
+                <input
+                    id="simultaneous_use"
+                    type="number"
+                    name="simultaneous_use"
+                    value="1"
+                    min="1"
+                    required
+                >
+
+                <p class="help-text">
+                    Maximum number of devices allowed to use the same login simultaneously.
+                </p>
+            </div>
+
+
+            <!-- Download Speed -->
+            <div class="form-group">
+                <label>Download Speed Cap</label>
+
+                <div class="input-row">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="download_rate_value"
+                        placeholder="Unlimited"
+                        min="0"
+                    >
+
+                    <select name="download_rate_unit">
+                        <option value="Kbit/s">Kbps</option>
+                        <option value="Mbit/s" selected>Mbps</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- Upload Speed -->
+            <div class="form-group">
+                <label>Upload Speed Cap</label>
+
+                <div class="input-row">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="upload_rate_value"
+                        placeholder="Unlimited"
+                        min="0"
+                    >
+
+                    <select name="upload_rate_unit">
+                        <option value="Kbit/s">Kbps</option>
+                        <option value="Mbit/s" selected>Mbps</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- Download Quota -->
+            <div class="form-group">
+                <label>Download Quota</label>
+
+                <div class="input-row">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="download_quota_value"
+                        placeholder="Unlimited"
+                        min="0"
+                    >
+
+                    <select name="download_quota_unit">
+                        <option value="KB">KB</option>
+                        <option value="MB" selected>MB</option>
+                        <option value="GB">GB</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- Upload Quota -->
+            <div class="form-group">
+                <label>Upload Quota</label>
+
+                <div class="input-row">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="upload_quota_value"
+                        placeholder="Unlimited"
+                        min="0"
+                    >
+
+                    <select name="upload_quota_unit">
+                        <option value="KB">KB</option>
+                        <option value="MB" selected>MB</option>
+                        <option value="GB">GB</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- Price -->
+            <div class="form-group">
+                <label for="price">Price</label>
+
+                <input
+                    id="price"
+                    type="text"
+                    name="price"
+                    placeholder="Optional"
+                >
+            </div>
+
+
+            <!-- Button -->
+            <div class="form-actions">
+                <button type="submit">
+                    Create Plan
+                </button>
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

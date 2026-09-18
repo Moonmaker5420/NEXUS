@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Create Plan{% endblock %}
+{% block content %}
+<h1>Create Plan</h1>
+<div class="card" style="max-width:900px;">
+  <form method="post" action="{{ url_for('create_plan') }}">
+    <div class="toolbar">
+      <div><label>Name</label><input type="text" name="name" placeholder="e.g. Day Pass" required></div>
+      <div><label>Description</label><input type="text" name="description" placeholder="optional"></div>
+      <div><label>Session (minutes)</label><input type="number" name="session_minutes" placeholder="unlimited" style="width:110px"></div>
+      <div>
+        <label>Download cap</label>
+        <input type="number" step="0.01" name="download_rate_value" placeholder="uncapped" style="width:90px">
+        <select name="download_rate_unit" style="width:80px">
+          <option value="Kbit/s">Kbps</option>
+          <option value="Mbit/s" selected>Mbps</option>
+        </select>
+      </div>
+      <div>
+        <label>Upload cap</label>
+        <input type="number" step="0.01" name="upload_rate_value" placeholder="uncapped" style="width:90px">
+        <select name="upload_rate_unit" style="width:80px">
+          <option value="Kbit/s">Kbps</option>
+          <option value="Mbit/s" selected>Mbps</option>
+        </select>
+      </div>
+      <div>
+        <label>Download quota</label>
+        <input type="number" step="0.01" name="download_quota_value" placeholder="uncapped" style="width:90px">
+        <select name="download_quota_unit" style="width:70px">
+          <option value="KB">KB</option>
+          <option value="MB" selected>MB</option>
+          <option value="GB">GB</option>
+        </select>
+      </div>
+      <div>
+        <label>Upload quota</label>
+        <input type="number" step="0.01" name="upload_quota_value" placeholder="uncapped" style="width:90px">
+        <select name="upload_quota_unit" style="width:70px">
+          <option value="KB">KB</option>
+          <option value="MB" selected>MB</option>
+          <option value="GB">GB</option>
+        </select>
+      </div>
+      <label>Simultaneous Use</label>
+      <input
+          type="number"
+          name="simultaneous_use"
+          value="1"
+          min="1"
+          required
+      >
+      <p style="font-size:12px;color:#777;">
+          Maximum number of devices allowed to use the same login simultaneously.
+      </p>
+
+      <div><label>Price</label><input type="text" name="price" placeholder="optional" style="width:90px"></div>
+      <button type="submit">Create plan</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

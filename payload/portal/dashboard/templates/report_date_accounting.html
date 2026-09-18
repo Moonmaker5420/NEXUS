@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Date Accounting{% endblock %}
+{% block content %}
+<style>
+@media print {
+  nav, form, .no-print { display:none !important; }
+  main { padding:0 !important; }
+}
+</style>
+<h1 class="no-print">Date Accounting</h1>
+
+<form method="get" action="{{ url_for('report_date_accounting') }}" class="toolbar no-print" style="margin-bottom:16px;">
+  <div><label>From</label><input type="date" name="from" value="{{ date_from }}" required></div>
+  <div><label>To</label><input type="date" name="to" value="{{ date_to }}" required></div>
+  <div><label>Username (optional)</label><input type="text" name="username" value="{{ username }}" placeholder="leave blank for all users" style="width:200px"></div>
+  <button type="submit">Run Report</button>
+  {% if rows %}<button type="button" onclick="window.print()">Export PDF</button>{% endif %}
+</form>
+
+{% if date_from and date_to %}
+<h2>{{ date_from }} to {{ date_to }}{% if username %} — {{ username }}{% endif %}</h2>
+<table>
+  <tr><th>Username</th><th>IP</th><th>MAC</th><th>Start</th><th>Stop</th><th>Total Time</th><th>Upload</th><th>Download</th><th>Termination Reason</th><th>NAS IP</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.username }}</td>
+    <td>{{ r.framedipaddress or '—' }}</td>
+    <td>{{ r.callingstationid or '—' }}</td>
+    <td>{{ r.acctstarttime }}</td>
+    <td>{{ r.acctstoptime or '—' }}</td>
+    <td>{{ r.acctsessiontime | fmtduration }}</td>
+    <td>{{ r.acctoutputoctets | fmtbytes }}</td>
+    <td>{{ r.acctinputoctets | fmtbytes }}</td>
+    <td>{{ r.acctterminatecause or '—' }}</td>
+    <td>{{ r.nasipaddress }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="10">No accounting records in this range.</td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

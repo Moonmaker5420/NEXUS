@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block title %}Create MAC Device{% endblock %}
+
+{% block content %}
+
+<style>
+    .mac-card {
+        max-width: 1000px;
+    }
+
+    .mac-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        align-items: start;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+    }
+
+    .form-actions button {
+        min-width: 150px;
+    }
+
+    .help-text {
+        font-size: 13px;
+        color: #777;
+        margin-top: -12px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 700px) {
+        .mac-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            justify-content: stretch;
+        }
+
+        .form-actions button {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<h1>Bind MAC Device</h1>
+
+<p class="help-text">
+    All limits come from the selected plan —
+    edit the plan itself to change them.
+</p>
+
+
+{% if not plans %}
+
+<div class="card">
+    <p>
+        No active plans yet.
+        <a href="{{ url_for('plan_create_page') }}">
+            Create a plan first
+        </a>.
+    </p>
+</div>
+
+
+{% else %}
+
+<div class="card mac-card">
+
+    <form method="post"
+          action="{{ url_for('create_mac_device') }}">
+
+        <div class="mac-form">
+
+            <!-- MAC Address -->
+            <div class="form-group">
+                <label for="mac_address">
+                    MAC Address
+                </label>
+
+                <input
+                    id="mac_address"
+                    type="text"
+                    name="mac_address"
+                    placeholder="aa:bb:cc:dd:ee:ff"
+                    required
+                >
+            </div>
+
+
+            <!-- Device Label -->
+            <div class="form-group">
+                <label for="label">
+                    Device Label
+                </label>
+
+                <input
+                    id="label"
+                    type="text"
+                    name="label"
+                    placeholder="e.g. Front desk laptop"
+                >
+            </div>
+
+
+            <!-- Owner -->
+            <div class="form-group">
+                <label for="owner_name">
+                    Owner
+                </label>
+
+                <input
+                    id="owner_name"
+                    type="text"
+                    name="owner_name"
+                    placeholder="e.g. Staff name"
+                >
+            </div>
+
+
+            <!-- Plan -->
+            <div class="form-group">
+                <label for="plan_id">
+                    Plan
+                </label>
+
+                <select
+                    id="plan_id"
+                    name="plan_id"
+                    required
+                >
+                    <option value="" disabled selected>
+                        Select a plan…
+                    </option>
+
+                    {% for p in plans %}
+                        <option value="{{ p.id }}">
+                            {{ p.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+
+            <!-- Expiry -->
+            <div class="form-group">
+                <label for="expires_days">
+                    Expires In (Days)
+                </label>
+
+                <input
+                    id="expires_days"
+                    type="number"
+                    name="expires_days"
+                    placeholder="Never"
+                    min="1"
+                >
+            </div>
+
+
+            <!-- Actions -->
+            <div class="form-actions">
+
+                <button type="submit">
+                    Add / Update Device
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

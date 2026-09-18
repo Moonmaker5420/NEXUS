@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ gatewayname }} — Login Failed</title>
+<style>
+  body { font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+         background:#f5f6f8; margin:0; padding:24px; }
+  .card { max-width:400px; margin:60px auto; background:#fff; border-radius:12px;
+          box-shadow:0 2px 12px rgba(0,0,0,.08); padding:28px; text-align:center; }
+  h1 { font-size:18px; color:#d93025; }
+  a.btn { display:inline-block; margin-top:16px; padding:10px 20px; background:#1a73e8;
+          color:#fff; text-decoration:none; border-radius:8px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>{{ reason }}</h1>
+    <p>Please check your details and try again.</p>
+    <a class="btn" href="javascript:history.back()">Try Again</a>
+  </div>
+</body>
+</html>

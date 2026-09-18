@@ -1,0 +1,5 @@
+portal ALL=(root) NOPASSWD: /usr/bin/ndsctl json
+portal ALL=(root) NOPASSWD: /usr/bin/ndsctl deauth *
+portal ALL=(root) NOPASSWD: /usr/bin/ndsctl auth *
+portal ALL=(root) NOPASSWD: /usr/lib/opennds/portal-tc-add.sh *
+portal ALL=(root) NOPASSWD: /usr/lib/opennds/portal-tc-del.sh *

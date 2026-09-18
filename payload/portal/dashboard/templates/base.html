@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Portal Dashboard{% endblock %}</title>
+<style>
+  :root { --accent:#1a73e8; --bg:#f5f6f8; --card:#fff; --text:#1f2430; --border:#e2e4e8; }
+  * { box-sizing:border-box; }
+  body { font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+         margin:0; background:var(--bg); color:var(--text); }
+  .shell { display:flex; min-height:100vh; }
+  nav { width:210px; background:#151a23; color:#cfd3da; padding:20px 0; flex-shrink:0; }
+  nav .brand { color:#fff; font-weight:700; padding:0 20px 20px; font-size:16px; }
+  nav a { display:block; padding:10px 20px; color:#cfd3da; text-decoration:none; font-size:14px; }
+  nav a:hover, nav a.active { background:#1f2635; color:#fff; }
+  main { flex:1; padding:28px 32px; }
+  h1 { font-size:22px; margin:0 0 20px; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border-radius:10px; overflow:hidden; }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); font-size:14px; }
+  th { background:#fafbfc; color:#666; font-weight:600; }
+  .card { background:var(--card); border-radius:10px; padding:18px 20px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
+  .stat { font-size:28px; font-weight:700; color:var(--accent); }
+  .stat-label { font-size:13px; color:#777; margin-top:4px; }
+  form.inline { display:inline; }
+  input, select { padding:8px 10px; border:1px solid #d5d8dd; border-radius:6px; font-size:14px; }
+  button, .btn { padding:8px 14px; background:var(--accent); color:#fff; border:none; border-radius:6px;
+        font-size:14px; cursor:pointer; text-decoration:none; display:inline-block; }
+  button.danger { background:#d93025; }
+  .flash { padding:10px 14px; border-radius:8px; margin-bottom:16px; font-size:14px; }
+  .flash.success { background:#e6f4ea; color:#188038; }
+  .flash.error { background:#fce8e6; color:#c5221f; }
+  .toolbar { display:flex; gap:10px; align-items:end; margin-bottom:18px; flex-wrap:wrap; }
+  .toolbar label { font-size:12px; color:#666; display:block; margin-bottom:3px; }
+  .badge { padding:2px 8px; border-radius:20px; font-size:12px; }
+  .badge.active { background:#e6f4ea; color:#188038; }
+  .badge.disabled, .badge.expired { background:#f1f3f4; color:#777; }
+  .badge.pending { background:#fef7e0; color:#a15c00; }
+  nav details { border-bottom:1px solid #232a37; }
+  nav details:last-of-type { border-bottom:none; }
+  nav summary { display:block; padding:10px 20px; color:#cfd3da; font-size:14px; cursor:pointer;
+        list-style:none; user-select:none; }
+  nav summary::-webkit-details-marker { display:none; }
+  nav summary::after { content:'›'; float:right; transform:rotate(90deg); transition:transform .15s; }
+  nav details[open] summary::after { transform:rotate(270deg); }
+  nav summary:hover { background:#1f2635; color:#fff; }
+  nav details a { padding-left:36px; font-size:13px; }
+  nav > a { display:block; padding:10px 20px; color:#cfd3da; text-decoration:none; font-size:14px; }
+  nav > a:hover, nav a.active { background:#1f2635; color:#fff; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav>
+    <div class="brand">Portal Admin</div>
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <a href="{{ url_for('sessions') }}">Live Sessions</a>
+    <details open>
+      <summary>Manage Plans</summary>
+      <a href="{{ url_for('plans') }}">List Plans</a>
+      <a href="{{ url_for('plan_create_page') }}">Create Plan</a>
+    </details>
+    <details>
+      <summary>Manage Vouchers</summary>
+      <a href="{{ url_for('vouchers') }}">List Vouchers</a>
+      <a href="{{ url_for('voucher_create_page') }}">Create Voucher</a>
+      <a href="{{ url_for('voucher_issue_page') }}">Issue Voucher</a>
+    </details>
+    <details>
+      <summary>Manage MAC</summary>
+      <a href="{{ url_for('mac_devices') }}">List MAC Devices</a>
+      <a href="{{ url_for('mac_create_page') }}">Create MAC Device</a>
+    </details>
+    <details>
+      <summary>Manage Users</summary>
+      <a href="{{ url_for('all_users') }}">List Users</a>
+      <a href="{{ url_for('create_login') }}">Create User</a>
+    </details>
+    <details>
+      <summary>Advertising</summary>
+      <a href="{{ url_for('banners') }}">List Banners</a>
+      <a href="{{ url_for('banner_create_page') }}">Create Banner</a>
+    </details>
+    <details>
+      <summary>Reports</summary>
+      <a href="{{ url_for('report_online_users') }}">Online Users</a>
+      <a href="{{ url_for('report_usage') }}">Usage Report</a>
+      <a href="{{ url_for('report_user_accounting') }}">User Accounting</a>
+      <a href="{{ url_for('report_date_accounting') }}">Date Accounting</a>
+      <a href="{{ url_for('report_top_users') }}">Top Users</a>
+    </details>
+    <a href="{{ url_for('logout') }}" style="margin-top:20px;color:#f28b82;">Logout</a>
+  </nav>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>

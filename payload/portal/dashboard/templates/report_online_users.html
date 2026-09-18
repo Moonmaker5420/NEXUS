@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Online Users{% endblock %}
+{% block content %}
+<h1>Online Users</h1>
+<table>
+  <tr><th>MAC</th><th>IP</th><th>Identifier</th><th>Method</th><th>State</th><th>Downloaded</th><th>Uploaded</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.mac }}</td>
+    <td>{{ r.ip }}</td>
+    <td>{{ r.identifier }}</td>
+    <td>{{ r.auth_method }}</td>
+    <td>{{ r.state }}</td>
+    <td>{{ r.download | fmtkb }}</td>
+    <td>{{ r.upload | fmtkb }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7">No clients currently connected.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Banners{% endblock %}
+{% block content %}
+<h1>Splash Page Banners</h1>
+<p style="font-size:13px;color:#777;margin-top:-12px;">
+  <a href="{{ url_for('banner_create_page') }}">+ Create Banner</a>
+</p>
+
+<table>
+  <tr><th>Preview</th><th>Title</th><th>Link</th><th>Order</th><th>Status</th><th></th></tr>
+  {% for b in banners %}
+  <tr>
+    <td><img src="{{ b.image_url }}" alt="" style="max-height:50px;max-width:140px;"></td>
+    <td>{{ b.title or '—' }}</td>
+    <td>{{ b.link_url or '—' }}</td>
+    <td>{{ b.display_order }}</td>
+    <td><span class="badge {{ b.status }}">{{ b.status }}</span></td>
+    <td>
+      <a href="{{ url_for('edit_banner_form', banner_id=b.id) }}" class="btn">Edit</a>
+      {% if b.status == 'active' %}
+      <form class="inline" method="post" action="{{ url_for('disable_banner', banner_id=b.id) }}">
+        <button type="submit" class="danger">Disable</button>
+      </form>
+      {% else %}
+      <form class="inline" method="post" action="{{ url_for('enable_banner', banner_id=b.id) }}">
+        <button type="submit">Enable</button>
+      </form>
+      {% endif %}
+      <form class="inline" method="post" action="{{ url_for('delete_banner', banner_id=b.id) }}"
+            onsubmit="return confirm('Delete this banner?')">
+        <button type="submit" class="danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6">No banners yet.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Create User{% endblock %}
+
+{% block content %}
+
+<style>
+  .create-user-card {
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .create-user-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .create-user-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .create-user-group.full-row {
+    grid-column: 1 / -1;
+  }
+
+  .create-user-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .create-user-group input,
+  .create-user-group select {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 38px;
+  }
+
+  .create-user-actions {
+    margin-top: 22px;
+    display: flex;
+    gap: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .create-user-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h1>Create User</h1>
+
+{% if not plans %}
+
+<div class="card">
+  <p>
+    No active plans yet.
+    <a href="{{ url_for('plan_create_page') }}">Create a plan first</a>
+    — every login must be bound to one.
+  </p>
+</div>
+
+{% else %}
+
+<div class="card create-user-card">
+
+  <form method="post" action="{{ url_for('create_login_password') }}">
+
+    <div class="create-user-grid">
+
+      <div class="create-user-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          placeholder="Enter username"
+          required
+        >
+      </div>
+
+      <div class="create-user-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="text"
+          name="password"
+          placeholder="Enter password"
+          required
+        >
+      </div>
+
+      <div class="create-user-group full-row">
+        <label for="plan_id">Plan</label>
+
+        <select id="plan_id" name="plan_id" required>
+          <option value="" disabled selected>Select a plan…</option>
+
+          {% for p in plans %}
+          <option value="{{ p.id }}">
+            {{ p.name }}
+          </option>
+          {% endfor %}
+
+        </select>
+      </div>
+
+    </div>
+
+    <div class="create-user-actions">
+      <button type="submit">Create User</button>
+    </div>
+
+  </form>
+
+</div>
+
+{% endif %}
+{% endblock %}

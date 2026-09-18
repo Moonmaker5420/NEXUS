@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Plans{% endblock %}
+{% block content %}
+<h1>Plans / Tiers</h1>
+<p style="font-size:13px;color:#777;margin-top:-12px;">
+  Reusable templates. Pick one when creating a voucher or MAC device to
+  auto-fill its limits. <a href="{{ url_for('plan_create_page') }}">+ Create Plan</a>
+</p>
+
+<table>
+  <tr><th>Name</th><th>Session</th><th>Down/Up caps</th><th>Down/Up quota</th><th>Simultaneous Use</th><th>Price</th><th>Status</th><th></th></tr>
+  {% for p in plans %}
+  <tr>
+    <td>{{ p.name }}<br><span style="font-size:12px;color:#888;">{{ p.description or '' }}</span></td>
+    <td>{{ p.session_minutes and (p.session_minutes ~ ' min') or 'unlimited' }}</td>
+    <td>{{ p.download_kbits | fmtkbits }} / {{ p.upload_kbits | fmtkbits }}</td>
+    <td>{{ p.download_quota_kb | fmtkb }} / {{ p.upload_quota_kb | fmtkb }}</td>
+    <td>{{ p.simultaneous_use or 1 }}</td>
+    <td>{{ p.price or '—' }}</td>
+    <td><span class="badge {{ p.status }}">{{ p.status }}</span></td>
+    <td>
+      <a href="{{ url_for('edit_plan_form', plan_id=p.id) }}" class="btn">Edit</a>
+      {% if p.status == 'active' %}
+      <form class="inline" method="post" action="{{ url_for('disable_plan', plan_id=p.id) }}">
+        <button type="submit" class="danger">Disable</button>
+      </form>
+      {% else %}
+      <form class="inline" method="post" action="{{ url_for('enable_plan', plan_id=p.id) }}">
+        <button type="submit">Enable</button>
+      </form>
+      {% endif %}
+      <form class="inline" method="post" action="{{ url_for('delete_plan', plan_id=p.id) }}"
+            onsubmit="return confirm('Delete plan {{ p.name }}? Vouchers/MAC devices using it keep their own settings.')">
+        <button type="submit" class="danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

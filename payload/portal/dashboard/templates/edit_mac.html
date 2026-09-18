@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Edit MAC Device{% endblock %}
+{% block content %}
+<h1>Edit Device: {{ device.mac_address }}</h1>
+<div class="card" style="max-width:480px;">
+  <form method="post" action="{{ url_for('edit_mac', mac=device.mac_address) }}">
+    <label>Plan</label>
+    <select name="plan_id" required style="width:100%;margin-bottom:12px;">
+      {% for p in plans %}
+      <option value="{{ p.id }}" {{ 'selected' if p.id == device.plan_id }}>{{ p.name }}</option>
+      {% endfor %}
+    </select>
+    <label>Label</label>
+    <input type="text" name="label" value="{{ device.label or '' }}" style="width:100%;margin-bottom:12px;">
+    <label>Owner</label>
+    <input type="text" name="owner_name" value="{{ device.owner_name or '' }}" style="width:100%;margin-bottom:12px;">
+    <label>Expires in (days from now)</label>
+    <input type="number" name="expires_days" placeholder="leave blank to keep current expiry" style="width:100%;margin-bottom:16px;">
+    <button type="submit">Save changes</button>
+    <a href="{{ url_for('all_users') }}" class="btn" style="background:#8a8f98;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

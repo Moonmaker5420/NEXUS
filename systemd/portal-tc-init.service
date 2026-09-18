@@ -1,0 +1,13 @@
+[Unit]
+Description=Portal per-client traffic shaping init (HTB + IFB)
+After=network-online.target opennds.service
+Wants=network-online.target
+Before=portal-fas.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/opennds/portal-tc-init.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

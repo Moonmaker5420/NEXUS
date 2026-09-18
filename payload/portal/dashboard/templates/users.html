@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}RADIUS Users{% endblock %}
+{% block content %}
+<h1>RADIUS Users</h1>
+<p style="font-size:13px;color:#777;margin-top:-12px;">
+  Quick add/remove for portal login accounts. For groups, quotas, and detailed
+  accounting, use DaloRADIUS.
+</p>
+
+<div class="card" style="margin-bottom:22px;">
+  <form method="post" action="{{ url_for('create_user') }}">
+    <div class="toolbar">
+      <div><label>Username</label><input type="text" name="username" required></div>
+      <div><label>Password</label><input type="text" name="password" required></div>
+      <button type="submit">Create user</button>
+    </div>
+  </form>
+</div>
+
+<table>
+  <tr><th>Username</th><th></th></tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.username }}</td>
+    <td>
+      <form class="inline" method="post" action="{{ url_for('delete_user', username=u.username) }}"
+            onsubmit="return confirm('Delete {{ u.username }}?')">
+        <button type="submit" class="danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

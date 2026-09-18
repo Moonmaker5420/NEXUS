@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Create Voucher{% endblock %}
+
+{% block content %}
+
+<style>
+    .voucher-card {
+        max-width: 1000px;
+    }
+
+    .voucher-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        align-items: start;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+    }
+
+    .form-actions button {
+        min-width: 140px;
+    }
+
+    .help-text {
+        font-size: 13px;
+        color: #777;
+        margin-top: -12px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 700px) {
+        .voucher-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            justify-content: stretch;
+        }
+
+        .form-actions button {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<h1>Create Voucher</h1>
+
+<p class="help-text">
+    New vouchers are created as <strong>pending</strong> —
+    go to Manage Vouchers &rarr; Issue Voucher to activate them.
+    All limits come from the selected plan — edit the plan itself to change them.
+</p>
+
+
+{% if not plans %}
+
+<div class="card">
+    <p>
+        No active plans yet.
+        <a href="{{ url_for('plan_create_page') }}">
+            Create a plan first
+        </a>.
+    </p>
+</div>
+
+
+{% else %}
+
+<div class="card voucher-card">
+
+    <form method="post" action="{{ url_for('create_vouchers') }}">
+
+        <div class="voucher-form">
+
+            <!-- Plan -->
+            <div class="form-group">
+                <label for="plan_id">Plan</label>
+
+                <select
+                    id="plan_id"
+                    name="plan_id"
+                    required
+                >
+                    <option value="" disabled selected>
+                        Select a plan…
+                    </option>
+
+                    {% for p in plans %}
+                        <option value="{{ p.id }}">
+                            {{ p.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+
+            <!-- Number of vouchers -->
+            <div class="form-group">
+                <label for="count">
+                    Number of Vouchers
+                </label>
+
+                <input
+                    id="count"
+                    type="number"
+                    name="count"
+                    value="1"
+                    min="1"
+                    max="500"
+                    required
+                >
+            </div>
+
+
+            <!-- Max uses -->
+            <div class="form-group">
+                <label for="max_uses">
+                    Max Uses Per Code
+                </label>
+
+                <input
+                    id="max_uses"
+                    type="number"
+                    name="max_uses"
+                    value="1"
+                    min="1"
+                    required
+                >
+            </div>
+
+
+            <!-- Expiry -->
+            <div class="form-group">
+                <label for="valid_days">
+                    Expires In (Days)
+                </label>
+
+                <input
+                    id="valid_days"
+                    type="number"
+                    name="valid_days"
+                    placeholder="Never"
+                    min="1"
+                >
+            </div>
+
+
+            <!-- Batch Label -->
+            <div class="form-group">
+                <label for="batch_label">
+                    Batch Label
+                </label>
+
+                <input
+                    id="batch_label"
+                    type="text"
+                    name="batch_label"
+                    placeholder="e.g. front-desk-aug"
+                >
+            </div>
+
+
+            <!-- Generate -->
+            <div class="form-actions">
+
+                <button type="submit">
+                    Generate Vouchers
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

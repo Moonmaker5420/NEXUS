@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Create Banner{% endblock %}
+
+{% block content %}
+
+<style>
+  .create-banner-card {
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .create-banner-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .create-banner-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .create-banner-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .create-banner-group input {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 38px;
+  }
+
+  .create-banner-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .create-banner-actions .btn {
+    text-decoration: none;
+  }
+</style>
+
+<h1>Create Banner</h1>
+
+<p style="font-size:13px;color:#777;margin-top:-12px;">
+  Upload the image file directly — clients on the splash page have no internet
+  access yet, so an external image URL will never load. jpg/png/gif/webp.
+</p>
+
+<div class="card create-banner-card">
+
+  <form
+    method="post"
+    action="{{ url_for('create_banner') }}"
+    enctype="multipart/form-data"
+    class="create-banner-form"
+  >
+
+    <div class="create-banner-group">
+      <label for="title">Title (internal reference only)</label>
+
+      <input
+        id="title"
+        type="text"
+        name="title"
+        placeholder="e.g. Summer promo"
+      >
+    </div>
+
+    <div class="create-banner-group">
+      <label for="image_file">Image file</label>
+
+      <input
+        id="image_file"
+        type="file"
+        name="image_file"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+        required
+      >
+    </div>
+
+    <div class="create-banner-group">
+      <label for="link_url">Click-through Link (optional)</label>
+
+      <input
+        id="link_url"
+        type="text"
+        name="link_url"
+        placeholder="https://..."
+      >
+    </div>
+
+    <div class="create-banner-group">
+      <label for="display_order">
+        Display Order (lower shows first)
+      </label>
+
+      <input
+        id="display_order"
+        type="number"
+        name="display_order"
+        value="0"
+      >
+    </div>
+
+    <div class="create-banner-actions">
+      <button type="submit">Create Banner</button>
+
+      <a
+        href="{{ url_for('banners') }}"
+        class="btn"
+        style="background:#8a8f98;"
+      >
+        Cancel
+      </a>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}

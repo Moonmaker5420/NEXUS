@@ -1,0 +1,126 @@
+# -*- text -*-
+##
+## clients.conf -- client configuration directives
+##
+##	$Id: 5f39ff120a44e3fb837d1893d54a7ebb31fd8749 $
+
+#######################################################################
+#
+#  Define RADIUS clients (usually a NAS, Access Point, etc.).
+
+#
+#  There are a number of security practices which are critical in the
+#  modern era.
+#
+#  * don't use RADIUS/UDP or RADIUS/TCP over the Internet.  Use RADIUS/TLS.
+#
+#  * If you do send RADIUS over UDP or TCP, don't send MS-CHAPv2.
+#    Anyone who can see the MS-CHAPv2 data can crack it in milliseconds.
+#
+#  * use the "radsecret" program to generate secrets.  It uses Perl (sorry).
+#    Every time you run it, it will generate a new strong secret.
+#
+#  * don't create shared secrets yourself.  Anything you create is likely to
+#    be in a "cracking" dictionary, and will allow a hobbyist attacker
+#    to crack the shared secret in a few minutes.
+#
+#  * Don't trust anyone who tells you to ignore the above recommendations.
+#
+
+#
+#  Defines a RADIUS client.
+#
+#  '127.0.0.1' is another name for 'localhost'.  It is enabled by default,
+#  to allow testing of the server after an initial installation.  If you
+#  are not going to be permitting RADIUS queries from localhost, we suggest
+#  that you delete, or comment out, this entry.
+#
+#
+
+#
+#  Each client has a "short name" that is used to distinguish it from
+#  other clients.
+#
+#  In version 1.x, the string after the word "client" was the IP
+#  address of the client.  In 2.0, the IP address is configured via
+#  the "ipaddr" or "ipv6addr" fields.  For compatibility, the 1.x
+#  format is still accepted.
+#
+
+# IPv6 Client
+client localhost_ipv6 {
+	ipv6addr	= ::1
+	secret		= testing123
+}
+
+# All IPv6 Site-local clients
+#client sitelocal_ipv6 {
+#	ipv6addr	= fe80::/16
+#	secret		= testing123
+#}
+
+#client example.org {
+#	ipaddr		= radius.example.org
+#	secret		= testing123
+#}
+
+#
+#  You can now specify one secret for a network of clients.
+#  When a client request comes in, the BEST match is chosen.
+#  i.e. The entry from the smallest possible network.
+#
+#client private-network-1 {
+#	ipaddr		= 192.0.2.0/24
+#	secret		= testing123-1
+#}
+
+#client private-network-2 {
+#	ipaddr		= 198.51.100.0/24
+#	secret		= testing123-2
+#}
+
+#######################################################################
+#
+#  Per-socket client lists.  The configuration entries are exactly
+#  the same as above, but they are nested inside of a section.
+#
+#  You can have as many per-socket client lists as you have "listen"
+#  sections, or you can re-use a list among multiple "listen" sections.
+#
+#  Un-comment this section, and edit a "listen" section to add:
+#  "clients = per_socket_clients".  That IP address/port combination
+#  will then accept ONLY the clients listed in this section.
+#
+#  There are additional considerations when using clients from SQL.
+#
+#  A client can be link to a virtual server via modules such as SQL.
+#  This link is done via the following process:
+#
+#  If there is no listener in a virtual server, SQL clients are added
+#  to the global list for that virtual server.
+#
+#  If there is a listener, and the first listener does not have a
+#  "clients=..." configuration item, SQL clients are added to the
+#  global list.
+#
+#  If there is a listener, and the first one does have a "clients=..."
+#  configuration item, SQL clients are added to that list.  The client
+#  { ...} ` configured in that list are also added for that listener.
+#
+#  The only issue is if you have multiple listeners in a virtual
+#  server, each with a different client list, then the SQL clients are
+#  added only to the first listener.
+#
+#clients per_socket_clients {
+#	client socket_client {
+#		ipaddr = 192.0.2.4
+#		secret = testing123
+#	}
+#}
+client fas_localhost {
+    ipaddr = 127.0.0.1
+    secret = __RADIUS_SECRET__
+    shortname = fas-local
+    require_message_authenticator = no
+
+}

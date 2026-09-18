@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Edit Banner{% endblock %}
+{% block content %}
+<h1>Edit Banner</h1>
+<p style="font-size:13px;color:#777;margin-top:-12px;">
+  Clients on the splash page have no internet access yet — images must be
+  uploaded locally, not linked externally.
+</p>
+<div class="card" style="max-width:520px;">
+  <p style="font-size:13px;color:#666;">Current image:</p>
+  <img src="{{ banner.image_url }}" style="max-width:100%;max-height:120px;margin-bottom:12px;display:block;">
+  <form method="post" action="{{ url_for('edit_banner', banner_id=banner.id) }}" enctype="multipart/form-data">
+    <label>Title (internal reference only)</label>
+    <input type="text" name="title" value="{{ banner.title or '' }}" style="width:100%;margin-bottom:12px;">
+    <label>Replace image (leave blank to keep current)</label>
+    <input type="file" name="image_file" accept="image/jpeg,image/png,image/gif,image/webp" style="width:100%;margin-bottom:12px;">
+    <label>Click-through Link (optional)</label>
+    <input type="text" name="link_url" value="{{ banner.link_url or '' }}" style="width:100%;margin-bottom:12px;">
+    <label>Display Order (lower shows first)</label>
+    <input type="number" name="display_order" value="{{ banner.display_order }}" style="width:100%;margin-bottom:16px;">
+    <button type="submit">Save changes</button>
+    <a href="{{ url_for('banners') }}" class="btn" style="background:#8a8f98;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

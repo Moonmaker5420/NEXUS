@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}MAC Devices{% endblock %}
+{% block content %}
+<h1>Trusted MAC Devices</h1>
+<p style="font-size:13px;color:#777;margin-top:-12px;">
+  <a href="{{ url_for('mac_create_page') }}">+ Bind New Device</a>
+</p>
+
+<table>
+  <tr><th>MAC</th><th>Label</th><th>Owner</th><th>Plan</th><th>Status</th><th>Expires</th><th></th></tr>
+  {% for d in devices %}
+  <tr>
+    <td>{{ d.mac_address }}</td>
+    <td>{{ d.label or '—' }}</td>
+    <td>{{ d.owner_name or '—' }}</td>
+    <td>{{ d.plan_name or '—' }}</td>
+    <td><span class="badge {{ d.status }}">{{ d.status }}</span></td>
+    <td>{{ d.expires_at.strftime('%Y-%m-%d') if d.expires_at else 'never' }}</td>
+    <td>
+      <a href="{{ url_for('edit_mac_form', mac=d.mac_address) }}" class="btn">Edit</a>
+      {% if d.status == 'active' %}
+      <form class="inline" method="post" action="{{ url_for('disable_mac_by_address', mac=d.mac_address) }}">
+        <button type="submit" class="danger">Disable</button>
+      </form>
+      {% else %}
+      <form class="inline" method="post" action="{{ url_for('enable_mac_by_address', mac=d.mac_address) }}">
+        <button type="submit">Enable</button>
+      </form>
+      {% endif %}
+      <form class="inline" method="post" action="{{ url_for('delete_mac_by_address', mac=d.mac_address) }}"
+            onsubmit="return confirm('Delete device {{ d.mac_address }}? This cannot be undone.')">
+        <button type="submit" class="danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

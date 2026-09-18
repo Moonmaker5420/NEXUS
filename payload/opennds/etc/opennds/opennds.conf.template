@@ -1,0 +1,35 @@
+# /etc/opennds/opennds.conf
+# openNDS config for FreeRADIUS + DaloRADIUS backed captive portal.
+# Generic Linux (compiled in place), not OpenWrt.
+
+# --- Core ---
+gatewayinterface __PORTAL_INTERFACE__
+gatewayname '__GATEWAY_NAME__'
+gatewayport __GATEWAY_PORT__
+debuglevel 1
+
+# --- Client limits / timeouts (minutes) ---
+sessiontimeout 1440
+preauthidletimeout 30
+authidletimeout 120
+checkinterval 60
+maxclients 250
+
+# --- FAS: custom Flask app, local, hashed-token security ---
+fasport 2080
+faspath /fas/login
+fas_secure_enabled 1
+faskey '__FAS_KEY__'
+login_option_enabled 0
+
+# --- BinAuth: always on from v10.1.0+ (cannot be disabled). Do NOT set
+# 'option binauth' to a replacement script — that disables auth_restore.
+# Instead, our logging logic lives in /usr/lib/opennds/custombinauth.sh,
+# which the default binauth_log.sh automatically calls.
+
+# --- Rate/volume quotas: defaults, overridden per-session by FAS/BinAuth args ---
+uploadrate 0
+downloadrate 0
+
+# --- ndsctl socket ---
+ndsctlsocket /var/run/opennds/ndsctl.sock

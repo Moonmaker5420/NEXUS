@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Sessions — last 24 hours</h1>
+
+<table style="margin-bottom:24px;">
+  <tr><th>Auth method</th><th>Sessions</th><th>Upload</th><th>Download</th></tr>
+  {% for row in by_method %}
+  <tr>
+    <td>{{ row.auth_method }}</td>
+    <td>{{ row.count }}</td>
+    <td>{{ (row.up / 1048576) | round(1) }} MB</td>
+    <td>{{ (row.down / 1048576) | round(1) }} MB</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h1>Recent sessions</h1>
+<table>
+  <tr><th>MAC</th><th>Method</th><th>Identifier</th><th>Start</th><th>End</th><th>Reason</th><th>Up</th><th>Down</th></tr>
+  {% for r in recent %}
+  <tr>
+    <td>{{ r.client_mac }}</td>
+    <td>{{ r.auth_method }}</td>
+    <td>{{ r.identifier }}</td>
+    <td>{{ r.session_start }}</td>
+    <td>{{ r.session_end or '—' }}</td>
+    <td>{{ r.terminate_cause | fmtcause }}</td>
+    <td>{{ r.upload_bytes | fmtbytes }}</td>
+    <td>{{ r.download_bytes | fmtbytes }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

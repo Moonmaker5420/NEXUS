@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% block title %}Edit Plan{% endblock %}
+
+{% block content %}
+
+<style>
+    .plan-card {
+        max-width: 1100px;
+    }
+
+    .plan-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        align-items: start;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .input-row input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .input-row select {
+        width: 95px;
+        flex-shrink: 0;
+    }
+
+    .help-text {
+        margin: 0;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 5px;
+    }
+
+    .form-actions button,
+    .form-actions .btn {
+        min-width: 140px;
+        text-align: center;
+    }
+
+    @media (max-width: 700px) {
+
+        .plan-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-actions button,
+        .form-actions .btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+
+<h1>Edit Plan: {{ plan.name }}</h1>
+
+<div class="card plan-card">
+
+    <form method="post"
+          action="{{ url_for('edit_plan', plan_id=plan.id) }}">
+
+        <div class="plan-form">
+
+            <!-- Plan Name -->
+            <div class="form-group">
+                <label for="name">Plan Name</label>
+
+                <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value="{{ plan.name }}"
+                    required
+                >
+            </div>
+
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Description</label>
+
+                <input
+                    id="description"
+                    type="text"
+                    name="description"
+                    value="{{ plan.description or '' }}"
+                    placeholder="Optional description"
+                >
+            </div>
+
+
+            <!-- Session -->
+            <div class="form-group">
+                <label for="session_minutes">
+                    Session (minutes)
+                </label>
+
+                <input
+                    id="session_minutes"
+                    type="number"
+                    name="session_minutes"
+                    value="{{ plan.session_minutes or '' }}"
+                    placeholder="Unlimited"
+                    min="1"
+                >
+            </div>
+
+
+            <!-- Simultaneous Use -->
+            <div class="form-group">
+                <label for="simultaneous_use">
+                    Simultaneous Use
+                </label>
+
+                <input
+                    id="simultaneous_use"
+                    type="number"
+                    name="simultaneous_use"
+                    value="{{ plan.simultaneous_use or 1 }}"
+                    min="1"
+                    required
+                >
+
+                <p class="help-text">
+                    Maximum number of devices allowed to use the same login simultaneously.
+                </p>
+            </div>
+
+
+            <!-- Download Speed -->
+            <div class="form-group">
+                <label>Download Speed Cap</label>
+
+                <div class="input-row">
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        name="download_rate_value"
+                        value="{{ dl_rate_val if dl_rate_val is not none else '' }}"
+                        placeholder="Unlimited"
+                    >
+
+                    <select name="download_rate_unit">
+
+                        <option
+                            value="Kbit/s"
+                            {{ 'selected' if dl_rate_unit == 'Kbit/s' }}
+                        >
+                            Kbps
+                        </option>
+
+                        <option
+                            value="Mbit/s"
+                            {{ 'selected' if dl_rate_unit == 'Mbit/s' }}
+                        >
+                            Mbps
+                        </option>
+
+                    </select>
+
+                </div>
+            </div>
+
+
+            <!-- Upload Speed -->
+            <div class="form-group">
+                <label>Upload Speed Cap</label>
+
+                <div class="input-row">
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        name="upload_rate_value"
+                        value="{{ ul_rate_val if ul_rate_val is not none else '' }}"
+                        placeholder="Unlimited"
+                    >
+
+                    <select name="upload_rate_unit">
+
+                        <option
+                            value="Kbit/s"
+                            {{ 'selected' if ul_rate_unit == 'Kbit/s' }}
+                        >
+                            Kbps
+                        </option>
+
+                        <option
+                            value="Mbit/s"
+                            {{ 'selected' if ul_rate_unit == 'Mbit/s' }}
+                        >
+                            Mbps
+                        </option>
+
+                    </select>
+
+                </div>
+            </div>
+
+
+            <!-- Download Quota -->
+            <div class="form-group">
+                <label>Download Quota</label>
+
+                <div class="input-row">
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        name="download_quota_value"
+                        value="{{ dl_quota_val if dl_quota_val is not none else '' }}"
+                        placeholder="Unlimited"
+                    >
+
+                    <select name="download_quota_unit">
+
+                        <option
+                            value="KB"
+                            {{ 'selected' if dl_quota_unit == 'KB' }}
+                        >
+                            KB
+                        </option>
+
+                        <option
+                            value="MB"
+                            {{ 'selected' if dl_quota_unit == 'MB' }}
+                        >
+                            MB
+                        </option>
+
+                        <option
+                            value="GB"
+                            {{ 'selected' if dl_quota_unit == 'GB' }}
+                        >
+                            GB
+                        </option>
+
+                    </select>
+
+                </div>
+            </div>
+
+
+            <!-- Upload Quota -->
+            <div class="form-group">
+                <label>Upload Quota</label>
+
+                <div class="input-row">
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        name="upload_quota_value"
+                        value="{{ ul_quota_val if ul_quota_val is not none else '' }}"
+                        placeholder="Unlimited"
+                    >
+
+                    <select name="upload_quota_unit">
+
+                        <option
+                            value="KB"
+                            {{ 'selected' if ul_quota_unit == 'KB' }}
+                        >
+                            KB
+                        </option>
+
+                        <option
+                            value="MB"
+                            {{ 'selected' if ul_quota_unit == 'MB' }}
+                        >
+                            MB
+                        </option>
+
+                        <option
+                            value="GB"
+                            {{ 'selected' if ul_quota_unit == 'GB' }}
+                        >
+                            GB
+                        </option>
+
+                    </select>
+
+                </div>
+            </div>
+
+
+            <!-- Price -->
+            <div class="form-group">
+                <label for="price">Price</label>
+
+                <input
+                    id="price"
+                    type="text"
+                    name="price"
+                    value="{{ plan.price or '' }}"
+                    placeholder="Optional"
+                >
+            </div>
+
+
+            <!-- Actions -->
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('plans') }}"
+                    class="btn"
+                    style="background:#8a8f98;"
+                >
+                    Cancel
+                </a>
+
+                <button type="submit">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

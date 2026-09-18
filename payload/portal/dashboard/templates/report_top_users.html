@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Top Users{% endblock %}
+{% block content %}
+<h1>Top Users</h1>
+
+<form method="get" action="{{ url_for('report_top_users') }}" class="toolbar" style="margin-bottom:16px;">
+  <div><label>From</label><input type="date" name="from" value="{{ date_from }}" required></div>
+  <div><label>To</label><input type="date" name="to" value="{{ date_to }}" required></div>
+  <div>
+    <label>Report by</label>
+    <select name="metric">
+      <option value="bandwidth" {{ 'selected' if metric == 'bandwidth' }}>Bandwidth</option>
+      <option value="time" {{ 'selected' if metric == 'time' }}>Time</option>
+    </select>
+  </div>
+  <div>
+    <label>Number of users</label>
+    <select name="limit">
+      {% for n in [5, 10, 20, 50] %}
+      <option value="{{ n }}" {{ 'selected' if limit == n }}>{{ n }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit">Run Report</button>
+</form>
+
+{% if date_from and date_to %}
+<table>
+  <tr>
+    <th>#</th><th>Username</th>
+    {% if metric == 'time' %}<th>Total Time</th>{% else %}<th>Total Usage</th>{% endif %}
+  </tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ r.username }}</td>
+    {% if metric == 'time' %}
+    <td>{{ r.total_time | fmtduration }}</td>
+    {% else %}
+    <td>{{ r.total_mb }} MB</td>
+    {% endif %}
+  </tr>
+  {% else %}
+  <tr><td colspan="3">No accounting records in this range.</td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

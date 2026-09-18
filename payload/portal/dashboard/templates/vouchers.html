@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Vouchers{% endblock %}
+{% block content %}
+<h1>Vouchers</h1>
+<p style="font-size:13px;color:#777;margin-top:-12px;">
+  <a href="{{ url_for('voucher_create_page') }}">+ Create Voucher</a> &nbsp;|&nbsp;
+  <a href="{{ url_for('voucher_issue_page') }}">Issue pending vouchers</a>
+</p>
+
+<form method="get" action="{{ url_for('vouchers') }}" style="margin-bottom:16px;">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search by code or batch label..." style="width:280px">
+  <button type="submit">Search</button>
+  {% if q %}<a href="{{ url_for('vouchers') }}" class="btn" style="background:#8a8f98;">Clear</a>{% endif %}
+</form>
+
+<table>
+  <tr><th>Code</th><th>Plan</th><th>Session</th><th>Speed</th><th>Quota</th><th>Used</th><th>Status</th><th>Batch</th><th>Expires</th><th></th></tr>
+  {% for v in vouchers %}
+  <tr>
+    <td><code>{{ v.code }}</code></td>
+    <td>{{ v.plan_name or '—' }}</td>
+    <td>{{ v.session_minutes }} min</td>
+    <td>{{ v.download_kbits | fmtkbits }} / {{ v.upload_kbits | fmtkbits }}</td>
+    <td>{{ v.download_quota_kb | fmtkb }} / {{ v.upload_quota_kb | fmtkb }}</td>
+    <td>{{ v.used_count }}/{{ v.max_uses }}</td>
+    <td><span class="badge {{ v.status }}">{{ v.status }}</span></td>
+    <td>{{ v.batch_label or '—' }}</td>
+    <td>{{ v.valid_until.strftime('%Y-%m-%d') if v.valid_until else 'never' }}</td>
+    <td>
+      {% if v.status == 'pending' %}
+      <form class="inline" method="post" action="{{ url_for('issue_voucher', code=v.code) }}">
+        <button type="submit">Issue</button>
+      </form>
+      {% elif v.status == 'active' %}
+      <form class="inline" method="post" action="{{ url_for('disable_voucher_by_code', code=v.code) }}">
+        <button type="submit" class="danger">Disable</button>
+      </form>
+      {% endif %}
+      <form class="inline" method="post" action="{{ url_for('delete_voucher_by_code', code=v.code) }}"
+            onsubmit="return confirm('Delete voucher {{ v.code }}? This cannot be undone.')">
+        <button type="submit" class="danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="10">No vouchers found.</td></tr>
+  {% endfor %}
+</table>
+
+<div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+  {% if page > 1 %}
+  <a class="btn" href="{{ url_for('vouchers', q=q, page=page-1) }}">&laquo; Prev</a>
+  {% endif %}
+  <span style="font-size:13px;color:#666;">Page {{ page }} of {{ total_pages }} ({{ total }} total)</span>
+  {% if page < total_pages %}
+  <a class="btn" href="{{ url_for('vouchers', q=q, page=page+1) }}">Next &raquo;</a>
+  {% endif %}
+</div>
+{% endblock %}

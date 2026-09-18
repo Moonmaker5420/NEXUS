@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Overview</h1>
+<div class="grid">
+  <a href="{{ url_for('report_online_users') }}" style="text-decoration:none;color:inherit;">
+    <div class="card"><div class="stat">{{ live_count }}</div><div class="stat-label">Clients online now</div></div>
+  </a>
+  <div class="card"><div class="stat">{{ total_logins }}</div><div class="stat-label">Total registered logins</div></div>
+  <a href="{{ url_for('vouchers') }}" style="text-decoration:none;color:inherit;">
+    <div class="card"><div class="stat">{{ active_vouchers }}</div><div class="stat-label">Active vouchers</div></div>
+  </a>
+  <div class="card"><div class="stat">{{ pending_vouchers }}</div><div class="stat-label">Pending vouchers</div></div>
+  <a href="{{ url_for('mac_devices') }}" style="text-decoration:none;color:inherit;">
+    <div class="card"><div class="stat">{{ active_macs }}</div><div class="stat-label">Trusted MAC devices</div></div>
+  </a>
+  <a href="{{ url_for('plans') }}" style="text-decoration:none;color:inherit;">
+    <div class="card"><div class="stat">{{ active_plans }}</div><div class="stat-label">Active plans</div></div>
+  </a>
+  <a href="{{ url_for('reports') }}" style="text-decoration:none;color:inherit;">
+    <div class="card"><div class="stat">{{ sessions_24h }}</div><div class="stat-label">Sessions, last 24h</div></div>
+  </a>
+  <div class="card">
+    <div class="stat" style="color:{{ '#188038' if internet.online else '#d93025' }};">
+      {{ 'Online' if internet.online else 'Offline' }}
+    </div>
+    <div class="stat-label">
+      Internet status{% if internet.online %} — {{ internet.latency_ms }} ms{% endif %}
+    </div>
+  </div>
+  <div class="card"><div class="stat">{{ (today_up / 1048576) | round(1) }} / {{ (today_down / 1048576) | round(1) }}</div><div class="stat-label">Today's usage (MB up/down)</div></div>
+  <div class="card"><div class="stat">{{ (week_up / 1048576) | round(1) }} / {{ (week_down / 1048576) | round(1) }}</div><div class="stat-label">This week's usage (MB up/down)</div></div>
+  <div class="card"><div class="stat">{{ uptime }}</div><div class="stat-label">Appliance uptime</div></div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="stat" style="color:{{ '#d93025' if disk.pct and disk.pct > 85 else '#1a73e8' }};">{{ disk.pct }}%</div>
+    <div class="stat-label">Disk used ({{ disk.used_gb }} / {{ disk.total_gb }} GB)</div>
+  </div>
+  <div class="card">
+    <div class="stat" style="color:{{ '#d93025' if memory.pct and memory.pct > 90 else '#1a73e8' }};">{{ memory.pct }}%</div>
+    <div class="stat-label">Memory used ({{ memory.used_mb }} / {{ memory.total_mb }} MB)</div>
+  </div>
+  <div class="card"><div class="stat">{{ load_avg }}</div><div class="stat-label">Load average (1m, 5m, 15m)</div></div>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <h2 style="font-size:15px;margin:0 0 12px;">Service Health</h2>
+  <table>
+    <tr><th>Service</th><th>Status</th></tr>
+    {% for name, status in services.items() %}
+    <tr>
+      <td>{{ name }}</td>
+      <td><span class="badge {{ 'active' if status == 'active' else 'disabled' }}">{{ status }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<p style="font-size:12px;color:#999;margin-top:16px;">Auto-refreshing every 30s.</p>
+<script>
+setTimeout(function() { window.location.reload(); }, 30000);
+</script>
+{% endblock %}

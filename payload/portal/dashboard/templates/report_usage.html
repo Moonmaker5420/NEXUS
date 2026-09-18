@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Usage Report{% endblock %}
+{% block content %}
+<h1>Usage Report</h1>
+<p style="font-size:13px;color:#777;margin-top:-12px;">All-time totals per username, from RADIUS accounting.</p>
+<table>
+  <tr><th>Username</th><th>Total Upload (MB)</th><th>Total Download (MB)</th><th>Total Usage (MB)</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.username }}</td>
+    <td>{{ r.total_up_mb }}</td>
+    <td>{{ r.total_down_mb }}</td>
+    <td>{{ r.total_mb }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="4">No accounting data yet.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

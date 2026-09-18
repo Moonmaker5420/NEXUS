@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}User Accounting{% endblock %}
+{% block content %}
+<style>
+@media print {
+  nav, form, .no-print { display:none !important; }
+  main { padding:0 !important; }
+}
+</style>
+<h1 class="no-print">User Accounting</h1>
+
+<form method="get" action="{{ url_for('report_user_accounting') }}" class="toolbar no-print" style="margin-bottom:16px;">
+  <div>
+    <label>Username / Voucher / MAC</label>
+    <input type="text" name="q" value="{{ q }}" placeholder="e.g. linus, HEWFSA7Q, aa:bb:cc:dd:ee:ff" style="width:280px" required>
+  </div>
+  <button type="submit">Search</button>
+  {% if rows %}<button type="button" onclick="window.print()">Export PDF</button>{% endif %}
+</form>
+
+{% if q %}
+<h2>Accounting for: {{ q }}</h2>
+<table>
+  <tr><th>Username</th><th>IP</th><th>MAC</th><th>Start</th><th>Stop</th><th>Total Time</th><th>Upload</th><th>Download</th><th>Termination Reason</th><th>NAS IP</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.username }}</td>
+    <td>{{ r.framedipaddress or '—' }}</td>
+    <td>{{ r.callingstationid or '—' }}</td>
+    <td>{{ r.acctstarttime }}</td>
+    <td>{{ r.acctstoptime or '—' }}</td>
+    <td>{{ r.acctsessiontime | fmtduration }}</td>
+    <td>{{ r.acctoutputoctets | fmtbytes }}</td>
+    <td>{{ r.acctinputoctets | fmtbytes }}</td>    
+    <td>{{ r.acctterminatecause or '—' }}</td>
+    <td>{{ r.nasipaddress }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="10">No accounting records found for "{{ q }}".</td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}
